@@ -37,23 +37,33 @@ def write_table(name, text):
     f.close()
 pass
 def iqr_outlier(data : pd.Series):
+    ### AMPLITUDE INTERQUARTIL | IQR = (Q3 - Q1)
+    # Será usado o IQR para definir os outliers do
+    # campo. Portanto é necessário remover dados 
+    # faltantes e ordena-los para que seja possível
+    # encontrar a amplitude interquartil do campo.
+
     ### Definindo os quartis
     q1 = data.quantile(0.25)
     q3 = data.quantile(0.75)
     ### Encontrando os limites 
     lim_inferior = q1 + (1.5 * (q3 - q1))
     lim_superior = q3 + (1.5 * (q3 - q1))
-
+    # Com os limites é possível contruir o intervalo
+    # interquartil e podemos usa-lo para identificar
+    # os outliers estando abaixo ou acima dele
     is_outlier = []
-    
     length = data.size
-    for i in range(length):
+    ### Agora é verificar os elementos estão fora intervalo 
+    for i in range(length): # percorrendo todos o elemento da amostra
         result = False
         ### Verifica se o valor está fora da amplitude, sendo outlier
-        if(data.iloc[i] < lim_inferior, data.iloc[i] > lim_superior):
+        if(data.iloc[i] < lim_inferior or data.iloc[i] > lim_superior):
             result = True
         is_outlier.append(result)
-
+    ### Criando uma tabela 
+    # Preenchendo a tabela com o valor do limites e a verificação de se 
+    # o elemento da amostra se encontra fora desse intervalo
     iqr_table = pd.DataFrame({
         "[IQR] min" : pd.Series([lim_inferior] * length),
         "[IQR] max" : pd.Series([lim_superior] * length),
@@ -67,12 +77,6 @@ def small_dataframe():
     # do seus dados e do resultado das suas operações
 
     ## TRATANDO OS OUTLIERS DE CADA COLUNA 
-    ### AMPLITUDE INTERQUARTIL | IQR = (Q3 - Q1)
-    # Será usado o IQR para definir os outliers do
-    # campo. Portanto é necessário remover dados 
-    # faltantes e ordena-los para que seja possível
-    # encontrar a amplitude interquartil do campo.
-    
     for field in NUMERIC_FIELDS:
         ### Removendo dados faltantes 
         clean_data = data[field].dropna()
