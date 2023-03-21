@@ -35,7 +35,7 @@ def write_table(name, text):
     f = open(f"./data/{name}.txt", "w")
     f.write(str(text))
     f.close()
-pass
+    pass
 def iqr_outlier(data : pd.Series):
     ### AMPLITUDE INTERQUARTIL | IQR = (Q3 - Q1)
     # Será usado o IQR para definir os outliers do
@@ -47,7 +47,7 @@ def iqr_outlier(data : pd.Series):
     q1 = data.quantile(0.25)
     q3 = data.quantile(0.75)
     ### Encontrando os limites 
-    lim_inferior = q1 + (1.5 * (q3 - q1))
+    lim_inferior = q1 - (1.5 * (q3 - q1))
     lim_superior = q3 + (1.5 * (q3 - q1))
     # Com os limites é possível contruir o intervalo
     # interquartil e podemos usa-lo para identificar
@@ -70,6 +70,29 @@ def iqr_outlier(data : pd.Series):
         "[IQR] isOutlier": pd.Series(is_outlier)
     })
     return iqr_table
+def std_outlier(data : pd.Series):
+    ### Definindo a media 
+    media = data.mean()
+    ### Encontrando os limites
+    lim_inferior = media - 3 * data.std() 
+    lim_superior = media + 3 * data.std()
+    
+    is_outlier = []
+    length = data.size
+
+    for i in range(length):
+        result = False
+
+        if(data.iloc[i] < lim_inferior or data.iloc[i] > lim_superior):
+            result = True
+        is_outlier.append(result)
+    
+    std_table = pd.DataFrame({
+        "[STD] min" : pd.Series([lim_inferior] * length),
+        "[STD] max" : pd.Series([lim_superior] * length),
+        "[STD] isOutlier" : pd.Series(is_outlier)
+    })
+    return std_table
 def small_dataframe():
     ## RECONHECENDO OUTLIERS
     # Para isso iremos tratar cada coluna do dataset 
@@ -88,11 +111,12 @@ def small_dataframe():
         n = clean_data.shape[0] # n = length
         
         iqr = iqr_outlier(clean_data)
+        std = std_outlier(clean_data)
         values = pd.DataFrame({
             "value" : pd.Series(clean_data)
         })
 
-        table = pd.concat([values, iqr], axis=1)
+        table = pd.concat([values, iqr, std], axis=1)
         write_table(name=field, text=table.T.to_string())
 
 small_dataframe()
