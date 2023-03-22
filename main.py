@@ -88,12 +88,12 @@ def small_dataframe():
         clean_data = data[field].dropna()
         ### Ordenando os valores sobrantes
         clean_data.sort_values(inplace=True)
+        ## Verificando se não é um array nulo ##
         if(clean_data.isnull().all() == False):
-            
             ### Reiniciando o index para novo dataframe
             clean_data.reset_index(drop=True, inplace=True)
-            
-            if((clean_data == 0).all() == False):
+            ## Verificando se o array não é composto por zeros ##
+            if((clean_data == 0).all() == False): 
                 iqr = iqr_outlier(clean_data)
                 std = std_outlier(clean_data)
                 values = pd.DataFrame({
