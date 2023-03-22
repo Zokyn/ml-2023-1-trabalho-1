@@ -52,22 +52,22 @@ def iqr_outlier(data : pd.Series):
     # Com os limites é possível contruir o intervalo
     # interquartil e podemos usa-lo para identificar
     # os outliers estando abaixo ou acima dele
-    is_outlier = []
+    outlier_list = []
     length = data.size
     ### Agora é verificar os elementos estão fora intervalo 
     for i in range(length): # percorrendo todos o elemento da amostra
-        result = False
+        is_out = False
         ### Verifica se o valor está fora da amplitude, sendo outlier
         if(data.iloc[i] < lim_inferior or data.iloc[i] > lim_superior):
-            result = True
-        is_outlier.append(result)
+            is_out = True
+        outlier_list.append(is_out)
     ### Criando uma tabela 
     # Preenchendo a tabela com o valor do limites e a verificação de se 
     # o elemento da amostra se encontra fora desse intervalo
     iqr_table = pd.DataFrame({
         "[IQR] min" : pd.Series([lim_inferior] * length),
         "[IQR] max" : pd.Series([lim_superior] * length),
-        "[IQR] isOutlier": pd.Series(is_outlier)
+        "[IQR] isOutlier": pd.Series(outlier_list)
     })
     return iqr_table
 def std_outlier(data : pd.Series):
@@ -77,20 +77,20 @@ def std_outlier(data : pd.Series):
     lim_inferior = media - 3 * data.std() 
     lim_superior = media + 3 * data.std()
     
-    is_outlier = []
+    outlier_list = []
     length = data.size
 
     for i in range(length):
-        result = False
+        is_out = False
 
         if(data.iloc[i] < lim_inferior or data.iloc[i] > lim_superior):
-            result = True
-        is_outlier.append(result)
+            is_out = True
+        outlier_list.append(is_out)
     
     std_table = pd.DataFrame({
         "[STD] min" : pd.Series([lim_inferior] * length),
         "[STD] max" : pd.Series([lim_superior] * length),
-        "[STD] isOutlier" : pd.Series(is_outlier)
+        "[STD] isOutlier" : pd.Series(outlier_list)
     })
     return std_table
 def small_dataframe():
