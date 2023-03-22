@@ -1,0 +1,8 @@
+                        0         1         2
+value           -1.400606  0.530811  0.869795
+[IQR] min       -2.137698 -2.137698 -2.137698
+[IQR] max        2.403103  2.403103  2.403103
+[IQR] isOutlier     False     False     False
+[STD] min       -3.674235 -3.674235 -3.674235
+[STD] max        3.674235  3.674235  3.674235
+[STD] isOutlier     False     False     False

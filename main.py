@@ -14,23 +14,6 @@ def first_columns():
         if(header == 'Patient addmited to intensive care unit (1=yes, 0=no)'):
             INTENSIVE_CARE = data[data[header] == 1]
 
-NUMERIC_FIELDS = [
-    'Hematocrit',
-    'Hemoglobin',
-    'Platelets',
-    'Mean platelet volume ',
-    'Red blood Cells',
-    'Lymphocytes',
-    'Mean corpuscular hemoglobin concentration\xa0(MCHC)',
-    'Leukocytes',
-    'Basophils',
-    'Mean corpuscular hemoglobin (MCH)',
-    'Eosinophils',
-    'Mean corpuscular volume (MCV)',
-    'Monocytes',
-    'Red blood cell distribution width (RDW)',
-    'Serum Glucose'
-]      
 def write_table(name, text):
     f = open(f"./data/{name}.txt", "w")
     f.write(str(text))
@@ -105,18 +88,23 @@ def small_dataframe():
         clean_data = data[field].dropna()
         ### Ordenando os valores sobrantes
         clean_data.sort_values(inplace=True)
-        ### Reiniciando o index para novo dataframe
-        clean_data.reset_index(drop=True, inplace=True)
-        ### Pegando o comprimento dos dados
-        n = clean_data.shape[0] # n = length
-        
-        iqr = iqr_outlier(clean_data)
-        std = std_outlier(clean_data)
-        values = pd.DataFrame({
-            "value" : pd.Series(clean_data)
-        })
+        if(clean_data.isnull().all() == False):
+            
+            ### Reiniciando o index para novo dataframe
+            clean_data.reset_index(drop=True, inplace=True)
+            
+            if((clean_data == 0).all() == False):
+                iqr = iqr_outlier(clean_data)
+                std = std_outlier(clean_data)
+                values = pd.DataFrame({
+                    "value" : pd.Series(clean_data)
+                })
+            
+                table = pd.concat([values, iqr, std], axis=1)
+            
+                name = field.replace('/', '')
+                write_table(name=name, text=table.T.to_string())
 
-        table = pd.concat([values, iqr, std], axis=1)
-        write_table(name=field, text=table.T.to_string())
+NUMERIC_FIELDS = data.select_dtypes('number').columns[6:]      
 
 small_dataframe()
